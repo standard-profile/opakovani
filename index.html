@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Závěrečné opakování – Pravěk a starověk</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --primary: #2c6fbb;
+      --primary-dark: #1e528d;
+      --accent: #ffb84d;
+      --correct: #4caf50;
+      --wrong: #e74c3c;
+      --text: #1f2a37;
+      --muted: #6b7280;
+      --border: #d6deea;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 28px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    header h1 { margin: 0; font-size: 1.8rem; }
+    header p { margin: 6px 0 0; opacity: 0.92; font-size: 1rem; }
+
+    main {
+      max-width: 980px;
+      margin: 28px auto;
+      padding: 0 16px;
+    }
+
+    .exercise {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 22px 26px;
+      box-shadow: 0 2px 12px rgba(20, 50, 100, 0.06);
+      margin-bottom: 22px;
+    }
+
+    .exercise h2 {
+      margin-top: 0;
+      color: var(--primary-dark);
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 8px;
+      display: inline-block;
+      font-size: 1.2rem;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+    }
+
+    .subpart {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+    }
+    .subpart:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .subpart-label {
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    /* ===== Word bank & drag words ===== */
+    .word-bank {
+      background: #eef4fc;
+      border: 2px dashed var(--primary);
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 56px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .word {
+      background: var(--accent);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: grab;
+      user-select: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+      transition: transform 0.15s, box-shadow 0.15s;
+      font-size: 0.95rem;
+    }
+    .word:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.18);
+    }
+    .word:active { cursor: grabbing; }
+
+    .blank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 130px;
+      min-height: 34px;
+      padding: 2px 8px;
+      margin: 0 4px;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      background: #fafbfd;
+      vertical-align: middle;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .blank.drag-over { background: #fff3d6; border-color: var(--accent); }
+    .blank.correct {
+      background: #e7f7e9;
+      border-color: var(--correct);
+      border-style: solid;
+    }
+    .blank.wrong {
+      background: #fde7e5;
+      border-color: var(--wrong);
+      border-style: solid;
+    }
+    .blank .word { margin: 0; font-size: 0.9rem; padding: 4px 12px; }
+
+    /* ===== Actions / buttons ===== */
+    .actions {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    button:hover { background: var(--primary-dark); }
+    button:active { transform: scale(0.97); }
+    button.secondary { background: #e2e8f0; color: var(--text); }
+    button.secondary:hover { background: #cbd5e0; }
+
+    .score {
+      margin-left: auto;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--primary-dark);
+    }
+    .score.complete { color: var(--correct); }
+
+    /* ===== Multiple choice ===== */
+    .question {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .q-text {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--primary-dark);
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .options.grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      user-select: none;
+      font-size: 0.95rem;
+    }
+    .option:hover {
+      border-color: var(--primary);
+      background: #eef4fc;
+    }
+    .option:active { transform: scale(0.98); }
+    .option.selected {
+      border-color: var(--primary);
+      background: #dbeafe;
+      font-weight: 600;
+    }
+    .option.correct {
+      border-color: var(--correct);
+      background: #e7f7e9;
+    }
+    .option.wrong {
+      border-color: var(--wrong);
+      background: #fde7e5;
+    }
+    .option.reveal {
+      border-color: var(--correct);
+      background: #e7f7e9;
+      animation: pulse 0.6s ease;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+    .option .letter {
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 22px;
+    }
+
+    /* ===== Picker (numbers / letters) ===== */
+    .picker-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 7px;
+    }
+    .picker-buttons {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .picker-btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+    }
+    .picker-btn:hover {
+      border-color: var(--primary);
+      background: #eef4fc;
+    }
+    .picker-btn.selected {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary-dark);
+    }
+    .picker-row.correct {
+      background: #e7f7e9;
+      border-color: var(--correct);
+    }
+    .picker-row.wrong {
+      background: #fde7e5;
+      border-color: var(--wrong);
+    }
+    .picker-row.correct .picker-btn.selected {
+      background: var(--correct);
+      border-color: var(--correct);
+    }
+    .picker-row.wrong .picker-btn.selected {
+      background: var(--wrong);
+      border-color: var(--wrong);
+    }
+    .picker-row.wrong .picker-btn.reveal {
+      background: var(--correct);
+      color: white;
+      border-color: var(--correct);
+      animation: pulse 0.6s ease;
+    }
+    .picker-label {
+      font-weight: 500;
+      font-size: 0.98rem;
+    }
+
+    /* ===== Multi-select (checkbox-style) ===== */
+    .multi-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+    @media (max-width: 600px) {
+      .multi-options { grid-template-columns: 1fr; }
+    }
+    .multi-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.95rem;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .multi-option:hover {
+      border-color: var(--primary);
+      background: #eef4fc;
+    }
+    .multi-option .check-box {
+      width: 22px; height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+    .multi-option.selected .check-box {
+      background: var(--primary);
+      border-color: var(--primary-dark);
+    }
+    .multi-option.selected .check-box::before { content: '✓'; }
+    .multi-option.selected {
+      border-color: var(--primary);
+      background: #dbeafe;
+      font-weight: 600;
+    }
+    .multi-option.correct {
+      border-color: var(--correct);
+      background: #e7f7e9;
+    }
+    .multi-option.wrong {
+      border-color: var(--wrong);
+      background: #fde7e5;
+    }
+    .multi-option.reveal {
+      border-color: var(--correct);
+      background: #e7f7e9;
+      animation: pulse 0.6s ease;
+    }
+
+    /* ===== Table fill (cv. 5a) ===== */
+    .hist-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 6px;
+      margin-bottom: 14px;
+    }
+    .hist-table th,
+    .hist-table td {
+      padding: 8px 10px;
+      text-align: left;
+    }
+    .hist-table th {
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+    .hist-table td.row-label {
+      background: #eef4fc;
+      font-weight: 700;
+      color: var(--primary-dark);
+      border-radius: 8px;
+      width: 130px;
+    }
+    .hist-table td .blank {
+      width: 100%;
+      min-width: 0;
+      min-height: 38px;
+      margin: 0;
+    }
+
+    /* ===== Letter picker grid (cv. 5b) ===== */
+    .letter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media (max-width: 700px) {
+      .letter-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== Matching (cv. 15, 16, 18) ===== */
+    .matching {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .match-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 240px) 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 8px 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .match-label {
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+    .match-row .blank {
+      width: 100%;
+      min-width: 0;
+      min-height: 40px;
+      margin: 0;
+    }
+    @media (max-width: 600px) {
+      .match-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+    }
+
+    /* ===== Fill sentences (cv. 1b/c, 4c, 11) ===== */
+    .sentences p {
+      margin: 12px 0;
+      font-size: 1.02rem;
+    }
+    .num-list {
+      counter-reset: item;
+      padding-left: 0;
+      list-style: none;
+    }
+    .num-list li {
+      margin: 10px 0;
+      padding-left: 32px;
+      position: relative;
+      font-size: 1rem;
+    }
+    .num-list li::before {
+      counter-increment: item;
+      content: counter(item) ".";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* ===== Top nav ===== */
+    .top-nav {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+    }
+    .top-nav strong { color: var(--primary-dark); }
+    .top-nav a {
+      display: inline-block;
+      margin: 4px 6px 4px 0;
+      padding: 4px 10px;
+      background: #eef4fc;
+      color: var(--primary-dark);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .top-nav a:hover { background: #dbeafe; }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.4rem; }
+      .exercise { padding: 16px 14px; }
+      .options.grid-2 { grid-template-columns: 1fr; }
+      .blank { min-width: 100px; }
+      .score { margin-left: 0; width: 100%; text-align: center; }
+      .picker-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📜 Závěrečné opakování</h1>
+    <p>Pravěk a starověk – interaktivní pracovní list pro 5. třídu</p>
+  </header>
+
+  <main>
+    <nav class="top-nav">
+      <strong>Skoč na cvičení:</strong>
+      <a href="#ex1">1</a><a href="#ex2">2</a><a href="#ex3">3</a><a href="#ex4">4</a>
+      <a href="#ex5">5</a><a href="#ex6">6</a><a href="#ex7">7</a><a href="#ex8">8</a>
+      <a href="#ex9">9</a><a href="#ex10">10</a><a href="#ex11">11</a><a href="#ex12">12</a>
+      <a href="#ex13">13</a><a href="#ex14">14</a><a href="#ex15">15</a><a href="#ex16">16</a>
+      <a href="#ex17">17</a><a href="#ex18">18</a><a href="#ex19">19</a>
+    </nav>
+
+    <!-- ========== Cvičení 1 ========== -->
+    <section class="exercise" id="ex1">
+      <h2>1. Periodizace dějin</h2>
+
+      <div class="subpart">
+        <div class="subpart-label">a) Očísluj pořadí, jak po sobě následovala jednotlivá dějinná období.</div>
+        <p class="hint">Klikni na číslo (1 = nejstarší období, 5 = nejnovější).</p>
+        <div class="picker-group" data-max="5">
+          <div class="picker-row" data-answer="5">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="1">1</button>
+              <button class="picker-btn" data-value="2">2</button>
+              <button class="picker-btn" data-value="3">3</button>
+              <button class="picker-btn" data-value="4">4</button>
+              <button class="picker-btn" data-value="5">5</button>
+            </div>
+            <div class="picker-label">moderní dějiny</div>
+          </div>
+          <div class="picker-row" data-answer="4">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="1">1</button>
+              <button class="picker-btn" data-value="2">2</button>
+              <button class="picker-btn" data-value="3">3</button>
+              <button class="picker-btn" data-value="4">4</button>
+              <button class="picker-btn" data-value="5">5</button>
+            </div>
+            <div class="picker-label">novověk</div>
+          </div>
+          <div class="picker-row" data-answer="1">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="1">1</button>
+              <button class="picker-btn" data-value="2">2</button>
+              <button class="picker-btn" data-value="3">3</button>
+              <button class="picker-btn" data-value="4">4</button>
+              <button class="picker-btn" data-value="5">5</button>
+            </div>
+            <div class="picker-label">pravěk</div>
+          </div>
+          <div class="picker-row" data-answer="2">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="1">1</button>
+              <button class="picker-btn" data-value="2">2</button>
+              <button class="picker-btn" data-value="3">3</button>
+              <button class="picker-btn" data-value="4">4</button>
+              <button class="picker-btn" data-value="5">5</button>
+            </div>
+            <div class="picker-label">starověk</div>
+          </div>
+          <div class="picker-row" data-answer="3">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="1">1</button>
+              <button class="picker-btn" data-value="2">2</button>
+              <button class="picker-btn" data-value="3">3</button>
+              <button class="picker-btn" data-value="4">4</button>
+              <button class="picker-btn" data-value="5">5</button>
+            </div>
+            <div class="picker-label">středověk</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subpart">
+        <div class="subpart-label">b) Dějinné období, které na území České republiky neproběhlo:</div>
+        <div class="word-bank" id="bank1bc">
+          <div class="word" draggable="true" data-word="pravěk">pravěk</div>
+          <div class="word" draggable="true" data-word="starověk">starověk</div>
+          <div class="word" draggable="true" data-word="středověk">středověk</div>
+          <div class="word" draggable="true" data-word="novověk">novověk</div>
+        </div>
+        <p>Toto období se nazývá <span class="blank" data-answer="starověk"></span>.</p>
+
+        <div class="subpart-label" style="margin-top:14px;">c) Nejdelší období lidských dějin označujeme jako:</div>
+        <p>Nazývá se <span class="blank" data-answer="pravěk"></span>.</p>
+      </div>
+
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 2 ========== -->
+    <section class="exercise" id="ex2">
+      <h2>2. První obydlený světadíl</h2>
+      <p class="hint">Klikni na správnou odpověď.</p>
+
+      <div class="question" data-correct="a">
+        <div class="q-text">První obydlený světadíl byl(a):</div>
+        <div class="options grid-2">
+          <div class="option" data-letter="a"><span class="letter">a)</span> Afrika</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> Severní Amerika</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> Asie</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> Austrálie</div>
+          <div class="option" data-letter="e"><span class="letter">e)</span> Evropa</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 3 ========== -->
+    <section class="exercise" id="ex3">
+      <h2>3. Vyber dvě chybné dvojice</h2>
+      <p class="hint">Označ <strong>dvě</strong> dvojice, které jsou nesprávné.</p>
+
+      <div class="multi-options" data-correct='["c","e"]'>
+        <div class="multi-option" data-key="a"><div class="check-box"></div><span><strong>a)</strong> Keltové – výroba skla</span></div>
+        <div class="multi-option" data-key="b"><div class="check-box"></div><span><strong>b)</strong> venuše – soška ženy</span></div>
+        <div class="multi-option" data-key="c"><div class="check-box"></div><span><strong>c)</strong> náčelník – osoba v čele rodu</span></div>
+        <div class="multi-option" data-key="d"><div class="check-box"></div><span><strong>d)</strong> oppida – keltská hradiště</span></div>
+        <div class="multi-option" data-key="e"><div class="check-box"></div><span><strong>e)</strong> bronz – 1. kov, slitina mědi a cínu</span></div>
+        <div class="multi-option" data-key="f"><div class="check-box"></div><span><strong>f)</strong> druidové – keltští kněží</span></div>
+        <div class="multi-option" data-key="g"><div class="check-box"></div><span><strong>g)</strong> homo – člověk</span></div>
+      </div>
+
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 4 ========== -->
+    <section class="exercise" id="ex4">
+      <h2>4. Doby kamenné, bronzová a železná</h2>
+
+      <div class="subpart">
+        <div class="subpart-label">a) Vyber a zakroužkuj písmeno chybné dvojice.</div>
+        <div class="question" data-correct="c">
+          <div class="options">
+            <div class="option" data-letter="a"><span class="letter">A)</span> doba bronzová – kovolitectví, kovotepectví</div>
+            <div class="option" data-letter="b"><span class="letter">B)</span> mladší doba kamenná – zemědělství</div>
+            <div class="option" data-letter="c"><span class="letter">C)</span> pozdní doba kamenná – vůz s loukoťovými koly</div>
+            <div class="option" data-letter="d"><span class="letter">D)</span> doba železná – kovářství, hutnictví</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subpart">
+        <div class="subpart-label">b) Očísluj, jak po sobě výše uvedená období následovala.</div>
+        <p class="hint">1 = nejstarší, 4 = nejmladší.</p>
+        <div class="picker-group" data-max="4">
+          <div class="picker-row" data-answer="3">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="1">1</button>
+              <button class="picker-btn" data-value="2">2</button>
+              <button class="picker-btn" data-value="3">3</button>
+              <button class="picker-btn" data-value="4">4</button>
+            </div>
+            <div class="picker-label">doba bronzová</div>
+          </div>
+          <div class="picker-row" data-answer="1">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="1">1</button>
+              <button class="picker-btn" data-value="2">2</button>
+              <button class="picker-btn" data-value="3">3</button>
+              <button class="picker-btn" data-value="4">4</button>
+            </div>
+            <div class="picker-label">mladší doba kamenná</div>
+          </div>
+          <div class="picker-row" data-answer="2">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="1">1</button>
+              <button class="picker-btn" data-value="2">2</button>
+              <button class="picker-btn" data-value="3">3</button>
+              <button class="picker-btn" data-value="4">4</button>
+            </div>
+            <div class="picker-label">pozdní doba kamenná</div>
+          </div>
+          <div class="picker-row" data-answer="4">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="1">1</button>
+              <button class="picker-btn" data-value="2">2</button>
+              <button class="picker-btn" data-value="3">3</button>
+              <button class="picker-btn" data-value="4">4</button>
+            </div>
+            <div class="picker-label">doba železná</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subpart">
+        <div class="subpart-label">c) Jak se nazývá období, které těm uvedeným předcházelo?</div>
+        <div class="word-bank" id="bank4c">
+          <div class="word" draggable="true" data-word="starší doba kamenná">starší doba kamenná</div>
+          <div class="word" draggable="true" data-word="střední doba kamenná">střední doba kamenná</div>
+          <div class="word" draggable="true" data-word="doba měděná">doba měděná</div>
+        </div>
+        <p>Předcházela <span class="blank" data-answer="starší doba kamenná"></span>.</p>
+      </div>
+
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 5 ========== -->
+    <section class="exercise" id="ex5">
+      <h2>5. Staroorientální státy</h2>
+
+      <div class="subpart">
+        <div class="subpart-label">a) Doplň tabulku – řeky a písmo jednotlivých států.</div>
+        <p class="hint">Přetáhni název do správné buňky.</p>
+        <div class="word-bank" id="bank5a">
+          <div class="word" draggable="true" data-word="Nil">Nil</div>
+          <div class="word" draggable="true" data-word="Indus">Indus</div>
+          <div class="word" draggable="true" data-word="Eufrat a Tigris">Eufrat a Tigris</div>
+          <div class="word" draggable="true" data-word="Žlutá řeka">Žlutá řeka</div>
+          <div class="word" draggable="true" data-word="hieroglyfy">hieroglyfy</div>
+          <div class="word" draggable="true" data-word="indické písmo">indické písmo</div>
+          <div class="word" draggable="true" data-word="klínové písmo">klínové písmo</div>
+          <div class="word" draggable="true" data-word="čínské znaky">čínské znaky</div>
+        </div>
+        <table class="hist-table">
+          <tr>
+            <th></th>
+            <th>řeky</th>
+            <th>písmo</th>
+          </tr>
+          <tr>
+            <td class="row-label">Egypt</td>
+            <td><div class="blank" data-answer="Nil"></div></td>
+            <td><div class="blank" data-answer="hieroglyfy"></div></td>
+          </tr>
+          <tr>
+            <td class="row-label">Indie</td>
+            <td><div class="blank" data-answer="Indus"></div></td>
+            <td><div class="blank" data-answer="indické písmo"></div></td>
+          </tr>
+          <tr>
+            <td class="row-label">Mezopotámie</td>
+            <td><div class="blank" data-answer="Eufrat a Tigris"></div></td>
+            <td><div class="blank" data-answer="klínové písmo"></div></td>
+          </tr>
+          <tr>
+            <td class="row-label">Čína</td>
+            <td><div class="blank" data-answer="Žlutá řeka"></div></td>
+            <td><div class="blank" data-answer="čínské znaky"></div></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="subpart">
+        <div class="subpart-label">b) Doplň první písmeno státu, s nímž pojem souvisí.</div>
+        <p class="hint">E = Egypt, M = Mezopotámie, I = Indie, Č = Čína</p>
+        <div class="letter-grid">
+          <div class="picker-row" data-answer="M">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">zikkurat</div>
+          </div>
+          <div class="picker-row" data-answer="M">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">Sumerové</div>
+          </div>
+          <div class="picker-row" data-answer="E">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">faraon</div>
+          </div>
+          <div class="picker-row" data-answer="E">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">sfinga</div>
+          </div>
+          <div class="picker-row" data-answer="Č">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">střelný prach</div>
+          </div>
+          <div class="picker-row" data-answer="E">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">pyramidy</div>
+          </div>
+          <div class="picker-row" data-answer="Č">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">hedvábí</div>
+          </div>
+          <div class="picker-row" data-answer="I">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">nula</div>
+          </div>
+          <div class="picker-row" data-answer="I">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">hinduismus</div>
+          </div>
+          <div class="picker-row" data-answer="Č">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">papír</div>
+          </div>
+          <div class="picker-row" data-answer="E">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">mumifikace</div>
+          </div>
+          <div class="picker-row" data-answer="Č">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">knihtisk</div>
+          </div>
+          <div class="picker-row" data-answer="I">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">Alóka</div>
+          </div>
+          <div class="picker-row" data-answer="E">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">Ramesse II.</div>
+          </div>
+          <div class="picker-row" data-answer="Č">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">Čchin</div>
+          </div>
+          <div class="picker-row" data-answer="M">
+            <div class="picker-buttons">
+              <button class="picker-btn" data-value="E">E</button>
+              <button class="picker-btn" data-value="M">M</button>
+              <button class="picker-btn" data-value="I">I</button>
+              <button class="picker-btn" data-value="Č">Č</button>
+            </div>
+            <div class="picker-label">Chammurapi</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 6 ========== -->
+    <section class="exercise" id="ex6">
+      <h2>6. Fénicie</h2>
+      <div class="question" data-correct="d">
+        <div class="q-text">S Fénicií <em>nesouvisí</em> pojem:</div>
+        <div class="options grid-2">
+          <div class="option" data-letter="a"><span class="letter">a)</span> Kartágo</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> purpur</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> mořeplavci</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> obrázkové písmo</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 7 ========== -->
+    <section class="exercise" id="ex7">
+      <h2>7. Židovství</h2>
+      <div class="question" data-correct="b">
+        <div class="q-text">O židovství <em>neplatí</em>:</div>
+        <div class="options grid-2">
+          <div class="option" data-letter="a"><span class="letter">a)</span> víra v jednoho boha</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> posvátná kniha – Bible</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> navázalo na ně křesťanství</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> Židé – Hebrejové</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 8 ========== -->
+    <section class="exercise" id="ex8">
+      <h2>8. Vyber chybnou dvojici</h2>
+      <div class="question" data-correct="d">
+        <div class="options grid-2">
+          <div class="option" data-letter="a"><span class="letter">a)</span> Atény – Attika</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> Řecko – Balkán</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> Řím – Apeninský poloostrov</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> Sparta – Kréta</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 9 ========== -->
+    <section class="exercise" id="ex9">
+      <h2>9. Nejstarší evropská civilizace</h2>
+      <div class="question" data-correct="b">
+        <div class="q-text">Nejstarší evropská civilizace vznikla:</div>
+        <div class="options">
+          <div class="option" data-letter="a"><span class="letter">a)</span> v Mezopotámii</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> na Krétě</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> v Řecku</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 10 ========== -->
+    <section class="exercise" id="ex10">
+      <h2>10. Mínojci a Mykéňané</h2>
+      <div class="question" data-correct="d">
+        <div class="q-text">Vyber <em>nepravdivé</em> tvrzení:</div>
+        <div class="options">
+          <div class="option" data-letter="a"><span class="letter">a)</span> Mínojské písmo se doposud nepodařilo rozluštit.</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> Mykénská palácová centra spolu válčila.</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> Mínojci byli zdatní mořeplavci a obchodníci.</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> Největší mykénský palác byl Knóssos.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 11 ========== -->
+    <section class="exercise" id="ex11">
+      <h2>11. Doplň patřičný název</h2>
+      <p class="hint">Přetáhni název ze zásobníku do správného řádku.</p>
+
+      <div class="word-bank" id="bank11">
+        <div class="word" draggable="true" data-word="Mínojská civilizace">Mínojská civilizace</div>
+        <div class="word" draggable="true" data-word="Achájci">Achájci</div>
+        <div class="word" draggable="true" data-word="Peloponéská válka">Peloponéská válka</div>
+        <div class="word" draggable="true" data-word="Etruskové">Etruskové</div>
+        <div class="word" draggable="true" data-word="Punské války">Punské války</div>
+        <div class="word" draggable="true" data-word="císařství">císařství</div>
+      </div>
+
+      <div class="matching">
+        <div class="match-row">
+          <div class="match-label">první vyspělá civilizace na Krétě</div>
+          <div class="blank" data-answer="Mínojská civilizace"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">první řecké kmeny</div>
+          <div class="blank" data-answer="Achájci"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">válka Athén se Spartou</div>
+          <div class="blank" data-answer="Peloponéská válka"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">první vyspělý národ na Apeninském poloostrově</div>
+          <div class="blank" data-answer="Etruskové"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">války Říma s Kartágem</div>
+          <div class="blank" data-answer="Punské války"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">způsob vlády v Římě po nástupu Octaviana</div>
+          <div class="blank" data-answer="císařství"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 12 ========== -->
+    <section class="exercise" id="ex12">
+      <h2>12. Řecko-perské války</h2>
+      <div class="question" data-correct="b">
+        <div class="q-text">Vyber <em>pravdivé</em> tvrzení:</div>
+        <div class="options">
+          <div class="option" data-letter="a"><span class="letter">a)</span> V bitvě u Marathonu vyhráli Sparťané.</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> V bitvě u Thermopyl bojoval Leonidas.</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> V pozemní bitvě u Salaminy vyhráli Řekové.</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> V bitvě u Thermopyl použil Hannibal slony.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 13 ========== -->
+    <section class="exercise" id="ex13">
+      <h2>13. Sparta a Athény</h2>
+      <div class="question" data-correct="c">
+        <div class="q-text">Vyber <em>pravdivé</em> tvrzení:</div>
+        <div class="options">
+          <div class="option" data-letter="a"><span class="letter">a)</span> Sparta měla nejlepší loďstvo v Řecku.</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> Atény měly nejlepší pozemní armádu.</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> Ve Spartě byla tvrdá výchova.</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> Ve Spartě se rozvíjelo umění.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 14 ========== -->
+    <section class="exercise" id="ex14">
+      <h2>14. Vyber chybnou dvojici</h2>
+      <div class="question" data-correct="d">
+        <div class="options">
+          <div class="option" data-letter="a"><span class="letter">a)</span> Parthenon – chrám bohyně Athény</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> kolonizace – zakládání nových osad</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> Akropolis – pahorek v Athénách</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> rovnoprávní občané – ženy a cizinci</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 15 ========== -->
+    <section class="exercise" id="ex15">
+      <h2>15. Spoj jméno s patřičným údajem</h2>
+      <p class="hint">Přetáhni údaj ze zásobníku k odpovídajícímu jménu.</p>
+
+      <div class="word-bank" id="bank15">
+        <div class="word" draggable="true" data-word="1. zrušil dlužní otroctví">1. zrušil dlužní otroctví</div>
+        <div class="word" draggable="true" data-word="2. nechal platit úředníky">2. nechal platit úředníky</div>
+        <div class="word" draggable="true" data-word="3. šíříl řeckou vzdělanost">3. šíříl řeckou vzdělanost</div>
+        <div class="word" draggable="true" data-word="4. vítěz bitvy u Chaironeie">4. vítěz bitvy u Chaironeie</div>
+      </div>
+
+      <div class="matching">
+        <div class="match-row">
+          <div class="match-label">a) Alexander Makedonský</div>
+          <div class="blank" data-answer="3. šíříl řeckou vzdělanost"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">b) Filip Makedonský</div>
+          <div class="blank" data-answer="4. vítěz bitvy u Chaironeie"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">c) Perikles</div>
+          <div class="blank" data-answer="2. nechal platit úředníky"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">d) Solon</div>
+          <div class="blank" data-answer="1. zrušil dlužní otroctví"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 16 ========== -->
+    <section class="exercise" id="ex16">
+      <h2>16. Spoj jméno římského císaře s patřičným údajem</h2>
+      <p class="hint">Přetáhni údaj ze zásobníku k odpovídajícímu jménu.</p>
+
+      <div class="word-bank" id="bank16">
+        <div class="word" draggable="true" data-word="1. největší rozloha římské říše">1. největší rozloha římské říše</div>
+        <div class="word" draggable="true" data-word="2. obranný val v Británii">2. obranný val v Británii</div>
+        <div class="word" draggable="true" data-word="3. první císař">3. první císař</div>
+        <div class="word" draggable="true" data-word="4. porazil Germány">4. porazil Germány</div>
+        <div class="word" draggable="true" data-word="5. první křesťanský císař">5. první křesťanský císař</div>
+        <div class="word" draggable="true" data-word="6. zabit v senátu">6. zabit v senátu</div>
+      </div>
+
+      <div class="matching">
+        <div class="match-row">
+          <div class="match-label">a) Gaius Iulius Caesar</div>
+          <div class="blank" data-answer="6. zabit v senátu"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">b) Hadrianus</div>
+          <div class="blank" data-answer="2. obranný val v Británii"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">c) Marcus Aurelius</div>
+          <div class="blank" data-answer="4. porazil Germány"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">d) Konstantin</div>
+          <div class="blank" data-answer="5. první křesťanský císař"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">e) Octavianus</div>
+          <div class="blank" data-answer="3. první císař"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">f) Traianus</div>
+          <div class="blank" data-answer="1. největší rozloha římské říše"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 17 ========== -->
+    <section class="exercise" id="ex17">
+      <h2>17. Vyber chybnou dvojici</h2>
+      <div class="question" data-correct="c">
+        <div class="options">
+          <div class="option" data-letter="a"><span class="letter">a)</span> patricijové – urození, plnoprávní</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> triumvirát – trojvládí</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> Hispánie – Francie</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> žoldáci – placení vojáci</div>
+          <div class="option" data-letter="e"><span class="letter">e)</span> tribun lidu – hájil zájmy plebejů</div>
+          <div class="option" data-letter="f"><span class="letter">f)</span> Pompeje – město známé výbuchem Vesuvu</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 18 ========== -->
+    <section class="exercise" id="ex18">
+      <h2>18. Spoj letopočet s patřičnou událostí</h2>
+      <p class="hint">Přetáhni událost ze zásobníku k odpovídajícímu letopočtu.</p>
+
+      <div class="word-bank" id="bank18">
+        <div class="word" draggable="true" data-word="1. rozdělení římské říše">1. rozdělení římské říše</div>
+        <div class="word" draggable="true" data-word="2. zánik západořímské říše">2. zánik západořímské říše</div>
+        <div class="word" draggable="true" data-word="3. zavraždění Caesara">3. zavraždění Caesara</div>
+        <div class="word" draggable="true" data-word="4. začátek republiky">4. začátek republiky</div>
+        <div class="word" draggable="true" data-word="5. Řecko součástí římské říše">5. Řecko součástí římské říše</div>
+      </div>
+
+      <div class="matching">
+        <div class="match-row">
+          <div class="match-label">a) 510 př. n. l.</div>
+          <div class="blank" data-answer="4. začátek republiky"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">b) 146 př. n. l.</div>
+          <div class="blank" data-answer="5. Řecko součástí římské říše"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">c) 44 př. n. l.</div>
+          <div class="blank" data-answer="3. zavraždění Caesara"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">d) 395 n. l.</div>
+          <div class="blank" data-answer="1. rozdělení římské říše"></div>
+        </div>
+        <div class="match-row">
+          <div class="match-label">e) 476 n. l.</div>
+          <div class="blank" data-answer="2. zánik západořímské říše"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+    <!-- ========== Cvičení 19 ========== -->
+    <section class="exercise" id="ex19">
+      <h2>19. Vyber chybnou dvojici</h2>
+      <div class="question" data-correct="d">
+        <div class="options">
+          <div class="option" data-letter="a"><span class="letter">a)</span> Spartakus – gladiátor</div>
+          <div class="option" data-letter="b"><span class="letter">b)</span> Hannibal – kartaginský vojevůdce</div>
+          <div class="option" data-letter="c"><span class="letter">c)</span> Koloseum – amfiteátr v Římě</div>
+          <div class="option" data-letter="d"><span class="letter">d)</span> akvadukt – silnice</div>
+          <div class="option" data-letter="e"><span class="letter">e)</span> Forum Romanum – náměstí v Římě</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="check-btn">✓ Zkontrolovat</button>
+        <button class="reset-btn secondary">↺ Vyresetovat</button>
+        <div class="score"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ========== Generic helpers ========== */
+    function setScore(scoreEl, correct, total) {
+      scoreEl.textContent = `Správně: ${correct}/${total}`;
+      scoreEl.classList.toggle('complete', correct === total);
+      if (correct === total) scoreEl.textContent += '  🎉 Výborně!';
+    }
+    function clearScore(scoreEl) {
+      scoreEl.textContent = '';
+      scoreEl.classList.remove('complete');
+    }
+
+    /* ========== Drag & drop word system ========== */
+    let draggedWord = null;
+    function attachWordListeners(word) {
+      word.addEventListener('dragstart', (e) => {
+        draggedWord = word;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => word.style.opacity = '0.4', 0);
+      });
+      word.addEventListener('dragend', () => {
+        word.style.opacity = '1';
+        draggedWord = null;
+      });
+    }
+    function setupDropZone(zone, bank) {
+      const isBank = zone === bank;
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!isBank) zone.classList.add('drag-over');
+      });
+      zone.addEventListener('dragleave', () => {
+        if (!isBank) zone.classList.remove('drag-over');
+      });
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (!isBank) zone.classList.remove('drag-over');
+        if (!draggedWord) return;
+        if (!isBank) {
+          const existing = zone.querySelector('.word');
+          if (existing && existing !== draggedWord) {
+            bank.appendChild(existing);
+          }
+          zone.classList.remove('correct', 'wrong');
+          zone.appendChild(draggedWord);
+        } else {
+          bank.appendChild(draggedWord);
+        }
+      });
+    }
+
+    /* ========== Fill / matching / table-fill exercise ========== */
+    function setupFillExercise(section) {
+      const bank = section.querySelector('.word-bank');
+      const blanks = section.querySelectorAll('.blank');
+      if (!bank || blanks.length === 0) return;
+      const checkBtn = section.querySelector('.check-btn');
+      const resetBtn = section.querySelector('.reset-btn');
+      const scoreEl = section.querySelector('.score');
+
+      section.querySelectorAll('.word').forEach(attachWordListeners);
+      setupDropZone(bank, bank);
+      blanks.forEach(b => setupDropZone(b, bank));
+
+      function checkBlanks() {
+        let correct = 0;
+        blanks.forEach(blank => {
+          const word = blank.querySelector('.word');
+          blank.classList.remove('correct', 'wrong');
+          if (word && word.dataset.word === blank.dataset.answer) {
+            blank.classList.add('correct');
+            correct++;
+          } else if (word) {
+            blank.classList.add('wrong');
+          }
+        });
+        return { correct, total: blanks.length };
+      }
+      function resetBlanks() {
+        blanks.forEach(blank => {
+          const word = blank.querySelector('.word');
+          if (word) bank.appendChild(word);
+          blank.classList.remove('correct', 'wrong');
+        });
+      }
+      return { checkBlanks, resetBlanks, blanks, scoreEl, checkBtn, resetBtn };
+    }
+
+    /* ========== Multiple choice (single) ========== */
+    function setupMC(section) {
+      const questions = section.querySelectorAll('.question[data-correct]');
+      if (questions.length === 0) return null;
+      questions.forEach(q => {
+        q.querySelectorAll('.option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            q.querySelectorAll('.option').forEach(o =>
+              o.classList.remove('selected', 'correct', 'wrong', 'reveal')
+            );
+            opt.classList.add('selected');
+          });
+        });
+      });
+      function checkMC() {
+        let correct = 0;
+        questions.forEach(q => {
+          const answer = q.dataset.correct;
+          const selected = q.querySelector('.option.selected');
+          q.querySelectorAll('.option').forEach(o =>
+            o.classList.remove('correct', 'wrong', 'reveal')
+          );
+          if (selected && selected.dataset.letter === answer) {
+            selected.classList.add('correct');
+            correct++;
+          } else {
+            if (selected) selected.classList.add('wrong');
+            const correctOpt = q.querySelector(`.option[data-letter="${answer}"]`);
+            if (correctOpt) correctOpt.classList.add('reveal');
+          }
+        });
+        return { correct, total: questions.length };
+      }
+      function resetMC() {
+        questions.forEach(q => {
+          q.querySelectorAll('.option').forEach(o =>
+            o.classList.remove('selected', 'correct', 'wrong', 'reveal')
+          );
+        });
+      }
+      return { checkMC, resetMC };
+    }
+
+    /* ========== Multi-select (cv. 3) ========== */
+    function setupMulti(section) {
+      const block = section.querySelector('.multi-options');
+      if (!block) return null;
+      const correctKeys = JSON.parse(block.dataset.correct);
+      const opts = block.querySelectorAll('.multi-option');
+      opts.forEach(o => {
+        o.addEventListener('click', () => {
+          o.classList.toggle('selected');
+          o.classList.remove('correct', 'wrong', 'reveal');
+        });
+      });
+      function checkMulti() {
+        let correct = 0;
+        const total = correctKeys.length;
+        opts.forEach(o => {
+          o.classList.remove('correct', 'wrong', 'reveal');
+          const isCorrectKey = correctKeys.includes(o.dataset.key);
+          const isSelected = o.classList.contains('selected');
+          if (isSelected && isCorrectKey) {
+            o.classList.add('correct');
+            correct++;
+          } else if (isSelected && !isCorrectKey) {
+            o.classList.add('wrong');
+          } else if (!isSelected && isCorrectKey) {
+            o.classList.add('reveal');
+          }
+        });
+        return { correct, total };
+      }
+      function resetMulti() {
+        opts.forEach(o => o.classList.remove('selected', 'correct', 'wrong', 'reveal'));
+      }
+      return { checkMulti, resetMulti };
+    }
+
+    /* ========== Picker (numbers / letters) ========== */
+    function setupPickers(section) {
+      const rows = section.querySelectorAll('.picker-row');
+      if (rows.length === 0) return null;
+      rows.forEach(row => {
+        row.querySelectorAll('.picker-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            row.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('selected', 'reveal'));
+            row.classList.remove('correct', 'wrong');
+            btn.classList.add('selected');
+          });
+        });
+      });
+      function checkPickers() {
+        let correct = 0;
+        rows.forEach(row => {
+          const answer = row.dataset.answer;
+          const selected = row.querySelector('.picker-btn.selected');
+          row.classList.remove('correct', 'wrong');
+          row.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('reveal'));
+          if (selected && selected.dataset.value === answer) {
+            row.classList.add('correct');
+            correct++;
+          } else {
+            row.classList.add('wrong');
+            const correctBtn = row.querySelector(`.picker-btn[data-value="${answer}"]`);
+            if (correctBtn) correctBtn.classList.add('reveal');
+          }
+        });
+        return { correct, total: rows.length };
+      }
+      function resetPickers() {
+        rows.forEach(row => {
+          row.classList.remove('correct', 'wrong');
+          row.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('selected', 'reveal'));
+        });
+      }
+      return { checkPickers, resetPickers };
+    }
+
+    /* ========== Wire up every exercise section ========== */
+    document.querySelectorAll('.exercise').forEach(section => {
+      const fill = setupFillExercise(section);
+      const mc = setupMC(section);
+      const multi = setupMulti(section);
+      const pickers = setupPickers(section);
+
+      const checkBtn = section.querySelector('.check-btn');
+      const resetBtn = section.querySelector('.reset-btn');
+      const scoreEl = section.querySelector('.score');
+      if (!checkBtn || !resetBtn || !scoreEl) return;
+
+      checkBtn.addEventListener('click', () => {
+        let totalCorrect = 0, totalCount = 0;
+        if (fill) {
+          const { correct, total } = fill.checkBlanks();
+          totalCorrect += correct; totalCount += total;
+        }
+        if (mc) {
+          const { correct, total } = mc.checkMC();
+          totalCorrect += correct; totalCount += total;
+        }
+        if (multi) {
+          const { correct, total } = multi.checkMulti();
+          totalCorrect += correct; totalCount += total;
+        }
+        if (pickers) {
+          const { correct, total } = pickers.checkPickers();
+          totalCorrect += correct; totalCount += total;
+        }
+        setScore(scoreEl, totalCorrect, totalCount);
+      });
+
+      resetBtn.addEventListener('click', () => {
+        if (fill) fill.resetBlanks();
+        if (mc) mc.resetMC();
+        if (multi) multi.resetMulti();
+        if (pickers) pickers.resetPickers();
+        clearScore(scoreEl);
+      });
+    });
+  </script>
+</body>
+</html>
